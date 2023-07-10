@@ -1,0 +1,26 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxtjs/tailwindcss": "^6.8.0",
+    "@types/node": "^18",
+    "nuxt": "^3.6.2"
+  },
+  "dependencies": {
+    "@googleapis/gmail": "^3.0.0",
+    "@simplewebauthn/server": "^7.3.1",
+    "abort-controller": "^3.0.0",
+    "flowbite": "^1.7.0",
+    "node-fetch": "^3.3.1",
+    "realm-web": "^2.0.0",
+    "speakeasy": "^2.0.0"
+  }
+}
