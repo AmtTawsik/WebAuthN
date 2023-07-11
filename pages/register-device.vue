@@ -55,6 +55,8 @@
 </template>
 
 <script setup>
+import {startRegistration} from '@simplewebauthn/browser'
+
 const otpSented = ref(false)
 const token = ref('')
 const email = ref('')
@@ -80,18 +82,38 @@ async function authenticateUser() {
 async function registerDevice() {
     try {
         toggleLoading()
-        const { data, success } = await useFetch('/api/authenticate/token-authenticate', {
+        await useFetch('/api/authenticate/token-authenticate', {
             method: "POST",
             body: {
                 email: email.value,
                 token: parseInt(token.value)
             }
         })
-        console.log({ webauthnm: success })
+        const {data}=await useFetch('/api/register/generate-registration-option',{
+            method:"POST",
+            body:{
+                email:email.value
+            }
+        })
         toggleLoading()
-        navigateTo('/register-success')
+        const attResp=await startRegistration({
+            ...data.value
+        })
+        toggleLoading()
+        const {data:finalResp}=await useFetch('/api/register/verify-registrion-option',{
+            method:'POST',
+            body:{
+                registrationBody:attResp,
+                email:email.value
+            }
+        })
+        if(finalResp.value.success){
+            toggleLoading()
+            localStorage.setItem(email.value,finalResp.value.deviceId)
+            navigateTo('/register-success')
+        }
     } catch (error) {
-
+        console.log(error)
     }
 }
 function toggleLoading() {

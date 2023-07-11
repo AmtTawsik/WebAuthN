@@ -20,7 +20,7 @@ export default defineEventHandler(async (event)=>{
             rpName:useRuntimeConfig().public.rpName,
             rpID:useRuntimeConfig().public.rpId,
             userID: user._id.toString(),
-            userName: user.email,
+            userName: user.name,
             attestationType: "none",
             excludeCredentials: authenticators?.map(authenticator => ({
                 id: base64urlToUint8(authenticator?.credentialID),
@@ -29,9 +29,7 @@ export default defineEventHandler(async (event)=>{
             }))
         })
         await userCollection.updateOne({_id:user._id}, { $set: { challenge: options.challenge } })
-        return{
-            options
-        }
+        return options
     }
     catch (error) {
         console.log(error)

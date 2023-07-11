@@ -1,9 +1,14 @@
 import { generateAuthenticationOptions } from "@simplewebauthn/server"
 import { base64urlToUint8 } from "../../helper/functions"
-import { useRealm } from "../../helper/realm"
+import { getServerUser, useRealm } from "../../helper/realm"
 
 export default defineEventHandler(async(event)=>{
-    const {mongo}=useRealm()
+    const { app } = useRealm()
+    let user=app?.currentUser || null
+    if (!app?.currentUser) {
+        user=await getServerUser()
+    }
+    const mongo=user.mongoClient('mongodb-atlas')
     const userCollection=mongo?.db('webauthn').collection('users')
     try {
         const { email, deviceId,mac } = await readBody(event)
@@ -15,7 +20,7 @@ export default defineEventHandler(async(event)=>{
             }
         }
         const authenticators = user.devices
-        const device =mac?null:authenticators.find(device => device.id === deviceId)
+        const device =mac?null:authenticators?.find(device => device._id.toString() === deviceId)
         if (!device && !mac) {
             setResponseStatus(event, 401)
             return {
@@ -34,10 +39,8 @@ export default defineEventHandler(async(event)=>{
             rpID:useRuntimeConfig().public.rpId,
             userVerification: "preferred"
         })
-        await userCollection.findByIdAndUpdate(user.id, { $set: { challenge: options.challenge } })
-        return {
-            options
-        }
+        await userCollection.findOneAndUpdate({_id:user._id}, { $set: { challenge: options.challenge } })
+        return options
     }
     catch (error) {
         console.log(error)

@@ -5,7 +5,10 @@ export default defineNuxtConfig({
   runtimeConfig:{
     public:{
       appId:'',
-      serverApiKey:''
+      serverApiKey:'',
+      rpId:'',
+      rpName:'',
+      origin:''
     }
   }
 })

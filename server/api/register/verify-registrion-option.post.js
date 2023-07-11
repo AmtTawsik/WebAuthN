@@ -1,6 +1,7 @@
 import { uint8Tobase64url } from "../../helper/functions"
 import { useRealm } from "../../helper/realm"
 import { verifyRegistrationResponse } from "@simplewebauthn/server"
+import {ObjectId} from 'bson'
 
 export default defineEventHandler(async (event) => {
     const { mongo } = useRealm()
@@ -36,6 +37,7 @@ export default defineEventHandler(async (event) => {
             $set: { challenge: "" },
             $push: {
                 devices: {
+                    _id:new ObjectId(),
                     credentialID: uint8Tobase64url(credentialID),
                     counter,
                     PublicKey: uint8Tobase64url(credentialPublicKey)
@@ -43,7 +45,9 @@ export default defineEventHandler(async (event) => {
             }
         }, { returnNewDocument: true })
         const {_id:deviceId}=newDevice.devices.at(-1)
+        console.log(deviceId.toString())
         return {
+            success:true,
             deviceId:deviceId.toString()
         }
     } catch (error) {
