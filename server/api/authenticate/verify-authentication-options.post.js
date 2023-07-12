@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
         let verification = await verifyAuthenticationResponse({
             response: body,
             expectedChallenge,
-            expectedOrigin: useRuntimeConfig().public.origin,
+            expectedOrigin: `${useRuntimeConfig().public.rpProtocol}://${useRuntimeConfig().public.rpId}`,
             expectedRPID: useRuntimeConfig().public.rpId,
             authenticator: {
                 ...authenticator,

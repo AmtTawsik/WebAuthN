@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
         verification = await verifyRegistrationResponse({
             response: body,
             expectedChallenge,
-            expectedOrigin: useRuntimeConfig().public.origin,
+            expectedOrigin: `${useRuntimeConfig().public.rpProtocol}://${useRuntimeConfig().public.rpId}`,
             expectedRPID: useRuntimeConfig().public.rpId
         })
         const { verified, registrationInfo } = verification

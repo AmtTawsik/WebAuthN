@@ -8,7 +8,7 @@ export default defineNuxtConfig({
       serverApiKey:'',
       rpId:'',
       rpName:'',
-      origin:''
+      rpProtocol:''
     }
   }
 })
