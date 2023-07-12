@@ -25,12 +25,18 @@ export default defineEventHandler(async (event) => {
         user=await userCollection.insertOne({ name, email })
         const {secret,token}=OTPGenerator()
         await tokenCollection.updateOne({user:user.insertedId},{$set:{secret,created_at:new Date().toISOString(),user:user.insertedId}},{upsert:true})
-        sendMail({
-            to:email,
-            from:"Verification Mail<iamsoumo26@gmail.com>",
-            subject:"Verification Mail",
-            body:`<p>Your OTP is <span style="font-weight:bold">${token}</span>. It is only valid for 60s, So hurry up!</p>`
+        const mail = await sendMail({
+            to: email,
+            from: "Verification Mail<iamsoumo26@gmail.com>",
+            subject: "Verification Mail",
+            body: `<p>Your OTP is <span>${token}</span>. It is only valid for 60s, So hurry up!</p>`
         })
+        if (!mail) {
+            setResponseStatus(event, 500)
+            return {
+                error: "Server Error!!"
+            }
+        }
         setResponseStatus(event, 201)
         return {
             message: "user created"

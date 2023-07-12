@@ -28,12 +28,17 @@ function makebody({to,from,subject,body}){
 
 
 export default async function sendMail(mailBody){
-    const raw=makebody(mailBody)
-    const {data:{id}}=await gmail.users.messages.send({
-        userId:"me",
-        resource:{
-            raw
-        }
-    })
+    try {
+        const raw=makebody(mailBody)
+        const {data:{id}}=await gmail.users.messages.send({
+            userId:"me",
+            resource:{
+                raw
+            }
+        })
+        return id
+    } catch (error) {
+       console.log(error) 
+    }
 }
 
