@@ -38,6 +38,7 @@
 <script setup>
 import {startAuthentication} from '@simplewebauthn/browser'
 
+const {app,Realm}=useRealm()
 const email=ref('')
 const isLoading=ref(false)
 
@@ -70,6 +71,12 @@ async function authenticateUser(){
             }
         })
         if(finalResp.value.verified){
+            const credentials=Realm.Credentials.function({
+                email:email.value,
+                deviceId,
+            })
+            const user=await app.logIn(credentials)
+            console.log(user)
             toggleLoading()
             navigateTo('/login-success')
         }

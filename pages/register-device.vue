@@ -110,7 +110,7 @@ async function registerDevice() {
         if(finalResp.value.success){
             toggleLoading()
             localStorage.setItem(email.value,finalResp.value.deviceId)
-            navigateTo('/register-success')
+            navigateTo('/login')
         }
     } catch (error) {
         console.log(error)

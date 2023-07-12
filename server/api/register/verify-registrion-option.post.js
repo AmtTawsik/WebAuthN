@@ -45,7 +45,6 @@ export default defineEventHandler(async (event) => {
             }
         }, { returnNewDocument: true })
         const {_id:deviceId}=newDevice.devices.at(-1)
-        console.log(deviceId.toString())
         return {
             success:true,
             deviceId:deviceId.toString()

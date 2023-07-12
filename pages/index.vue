@@ -59,6 +59,8 @@
 <script setup>
 import {startRegistration} from '@simplewebauthn/browser'
 
+
+const{app,Realm}=useRealm()
 const otpSented=ref(false)
 const token=ref('')
 const email=ref('')
@@ -111,8 +113,14 @@ async function registerWebAuthn(){
             }
         })
         if(finalResp.value.success){
-            toggleLoading()
             localStorage.setItem(email.value,finalResp.value.deviceId)
+            const credentials=Realm.Credentials.function({
+                email:email.value,
+                deviceId:finalResp.value.deviceId,
+            })
+            const user=await app.logIn(credentials)
+            console.log(user)
+            toggleLoading()
             navigateTo('/register-success')
         }
     } catch (error) {

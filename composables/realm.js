@@ -14,10 +14,3 @@ export function useRealm() {
         mongo,
     };
 }
-
-export async function getServerUser(){
-    const {app,Realm}=useRealm()
-    const credentials=Realm.Credentials.apiKey(useRuntimeConfig().public.serverApiKey)
-    const user=await app.logIn(credentials)
-    return user
-}
