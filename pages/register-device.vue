@@ -30,9 +30,12 @@
                         <div :class="{ 'hidden': !otpSented }" id="OTPSection">
                             <label for="token" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter
                                 the OTP</label>
-                            <input type="number" name="token" id="token" minlength="0" maxlength="6" v-model="token"
-                                class="bg-gray-50 border no-appearence border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-                            <span id="tokenSpanText" class="invisible text-sm text-red-500">this is not valid OTP</span>
+                            <input type="number" id="token" minlength="0" @change="() => {
+                                errorToken = false
+                            }" maxlength="6" v-model="token"
+                                class="bg-gray-50 border border-gray-300 no-appearence  text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                            <span id="user-exists" class="text-sm text-red-500" :class="{ 'invisible': !errorToken }">enter a
+                                valid otp</span>
                         </div>
                         <button type="submit"
                             class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
@@ -61,6 +64,7 @@ const otpSented = ref(false)
 const token = ref('')
 const email = ref('')
 const isLoading = ref(false)
+const errorToken=ref(false)
 async function authenticateUser() {
     console.log('hello 2')
     try {
@@ -87,8 +91,16 @@ async function registerDevice() {
             body: {
                 email: email.value,
                 token: parseInt(token.value)
+            },
+            onResponseError({ response }) {
+                if (response.status === 400) {
+                    errorToken.value = true
+                }
             }
         })
+        if (errorToken.value) {
+            return
+        }
         const {data}=await useFetch('/api/register/generate-registration-option',{
             method:"POST",
             body:{
