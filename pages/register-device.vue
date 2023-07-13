@@ -99,6 +99,7 @@ async function registerDevice() {
             }
         })
         if (errorToken.value) {
+             toggleLoading()
             return
         }
         const {data}=await useFetch('/api/register/generate-registration-option',{
