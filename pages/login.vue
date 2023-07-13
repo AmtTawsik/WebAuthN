@@ -58,6 +58,11 @@ async function authenticateUser(){
                 email:email.value,
                 deviceId,
                 mac
+            },
+            onResponseError({response}){
+                if(response.status===401){
+                    navigateTo('/register-device')
+                }
             }
         })
         toggleLoading()
