@@ -46,7 +46,8 @@ async function authenticateUser(){
     try {
         toggleLoading()
         const deviceId=localStorage.getItem(email.value)
-        if(!deviceId){
+        const mac=navigator.platform.indexOf('Mac') !==-1
+        if(!deviceId && !mac){
             toggleLoading()
             navigateTo('/register-device')
             return
@@ -55,7 +56,8 @@ async function authenticateUser(){
             method:"POST",
             body:{
                 email:email.value,
-                deviceId
+                deviceId,
+                mac
             }
         })
         toggleLoading()
