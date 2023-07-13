@@ -105,6 +105,7 @@ async function registerWebAuthn(){
             }
         })
         if (errorToken.value) {
+            toggleLoading()
             return
         }
         const {data}=await useFetch('/api/register/generate-registration-option',{
