@@ -5,7 +5,7 @@ import { useRealm } from "../../helper/realm"
 
 export default defineEventHandler(async (event)=>{
     const {mongo}=useRealm()
-    const userCollection=mongo?.db('webauthn').collection('users')
+    const userCollection=mongo?.db(useRuntimeConfig().public.db).collection('users')
     try {
         const { email } = await readBody(event)
         const user = await userCollection.findOne({ email })

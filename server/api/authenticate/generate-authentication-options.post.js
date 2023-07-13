@@ -9,7 +9,7 @@ export default defineEventHandler(async(event)=>{
         user=await getServerUser()
     }
     const mongo=user.mongoClient('mongodb-atlas')
-    const userCollection=mongo?.db('webauthn').collection('users')
+    const userCollection=mongo?.db(useRuntimeConfig().public.db).collection('users')
     try {
         const { email, deviceId,mac } = await readBody(event)
         const user = await userCollection.findOne({ email })

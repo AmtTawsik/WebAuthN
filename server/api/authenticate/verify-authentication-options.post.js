@@ -4,7 +4,7 @@ import { base64urlToUint8 } from "../../helper/functions"
 
 export default defineEventHandler(async (event) => {
     const { mongo } = useRealm()
-    const userCollection = mongo?.db('webauthn').collection('users')
+    const userCollection = mongo?.db(useRuntimeConfig().public.db).collection('users')
     try {
         const { authenticationBody: body, email } = await readBody(event)
         const user = await userCollection.findOne({ email })
