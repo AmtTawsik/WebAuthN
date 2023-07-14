@@ -46,7 +46,8 @@ async function authenticateUser(){
     try {
         toggleLoading()
         const deviceId=localStorage.getItem(email.value)
-        if(!deviceId){
+        const mac=navigator.platform.indexOf('Mac') !==-1
+        if(!deviceId && !mac){
             toggleLoading()
             navigateTo('/register-device')
             return
@@ -55,7 +56,13 @@ async function authenticateUser(){
             method:"POST",
             body:{
                 email:email.value,
-                deviceId
+                deviceId,
+                mac
+            },
+            onResponseError({response}){
+                if(response.status===401){
+                    navigateTo('/register-device')
+                }
             }
         })
         toggleLoading()
@@ -68,6 +75,11 @@ async function authenticateUser(){
             body:{
                 authenticationBody:attResp,
                 email:email.value
+            },
+            onResponseError({response}){
+                if(response.status===401){
+                    navigateTo('/register-device')
+                }
             }
         })
         if(finalResp.value.verified){

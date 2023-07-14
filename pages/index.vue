@@ -34,8 +34,12 @@
                             <label for="token"
                                 class="block mb-2 text-base font-medium text-gray-900 h-inherit dark:text-white">Enter your
                                 otp</label>
-                            <input type="number" id="token" minlength="0" maxlength="6" v-model="token"
+                            <input type="number" id="token" minlength="0" @change="() => {
+                                errorToken = false
+                            }" maxlength="6" v-model="token"
                                 class="bg-gray-50 border border-gray-300 no-appearence  text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600  focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                            <span id="user-exists" class="text-sm text-red-500" :class="{ 'invisible': !errorToken }">enter a
+                                valid otp</span>
                         </div>
                         <button type="submit"
                             class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
@@ -66,6 +70,7 @@ const token=ref('')
 const email=ref('')
 const name=ref('')
 const isLoading=ref(false)
+const errorToken=ref(false)
 async function registerUser(){
     try {
         toggleLoading()
@@ -92,8 +97,17 @@ async function registerWebAuthn(){
             body:{
                 email:email.value,
                 token:parseInt(token.value)
+            },
+            onResponseError({ response }) {
+                if (response.status === 400) {
+                    errorToken.value = true
+                }
             }
         })
+        if (errorToken.value) {
+            toggleLoading()
+            return
+        }
         const {data}=await useFetch('/api/register/generate-registration-option',{
             method:"POST",
             body:{
