@@ -75,6 +75,11 @@ async function authenticateUser(){
             body:{
                 authenticationBody:attResp,
                 email:email.value
+            },
+            onResponseError({response}){
+                if(response.status===401){
+                    navigateTo('/register-device')
+                }
             }
         })
         if(finalResp.value.verified){
